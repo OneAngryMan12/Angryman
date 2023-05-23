@@ -1,0 +1,55 @@
+"""
+井下环境监测数据处理
+"""
+import numpy as np
+import  matplotlib.pyplot as plt
+
+temperature_str = np.loadtxt('ug_dete.csv', \
+                         delimiter=',', \
+                         skiprows=1, \
+                         usecols=(1), \
+                         unpack=False)
+
+'''print("读出来的数组是temperature_str: \n", \
+      temperature_str)'''
+temperature = np.ndarray(len(temperature_str))
+for index in range(0,len(temperature_str)):
+    item = temperature_str[index]
+    if item != b"":
+        item = item.decode('gb2312')
+        item = float(item)
+    else:
+        item = None
+        temperature[index] = item
+
+    for index in range(0,len(temperature)):
+        item = temperature[index]
+        if item >= 500.0:
+            item = None
+        temperature[index] = item
+
+    t = np.arange(len(temperature))
+    plt.plot(t,temperature)
+    plt.plot(t,temperature,'pr')
+    plt.show()
+
+    def bisec(dataArray):
+        for index x in range(0,len(dataArray)):
+            if np.isnan(dataArray[index]):
+                dataArray[index] = 0.5*\
+                                   (dataArray[index - 1]+\
+                                    dataArray[index + 1])
+
+    bisec(temperature)
+    print("温度是：\n",temperature)
+
+    t = np.arange(len(temperature))
+    plt.plot(t,temperature)
+    plt.plot(t,temperature,'pr')
+    plt.show()
+
+    np.save('ug_temperature.csv',\
+            temperature,
+            delimiter=',',\
+            fmt = '%.2f'
+    )
